@@ -8,12 +8,12 @@ on:
     branches: [main]
     paths:
       - "lean/**"
-      - ".github/workflows/lean.yml"
+      - ".github/workflows/build.yaml"
   pull_request:
     branches: [main]
     paths:
       - "lean/**"
-      - ".github/workflows/lean.yml"
+      - ".github/workflows/build.yaml"
   workflow_dispatch:
 
 permissions:
@@ -58,7 +58,8 @@ jobs:
 
           if [ -z "$range" ] || ! changed=$(git diff --name-only --diff-filter=d "$range"); then
             files=$(all_files)
-          elif grep -qvE '^lean/LoVe/[^/]+\.lean$' <<< "$changed"; then
+          elif grep -E '^(lean/|\.github/workflows/build\.yaml$)' <<< "$changed" \
+              | grep -qvE '^lean/LoVe/[^/]+\.lean$'; then
             files=$(all_files)
           else
             files=$(grep -E '^lean/LoVe/[^/]+\.lean$' <<< "$changed" || true)
