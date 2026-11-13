@@ -36,9 +36,8 @@ jobs:
           fetch-depth: 0
 
       # Emits a JSON array of module names for the build matrix. Only modules whose
-      # file is in the diff are included. If anything else under `lean/` (toolchain,
-      # manifest, lakefile, ...) or this workflow changed, every module may be
-      # affected, so all of them are built. Manual runs also build everything.
+      # file is in the diff are included, whatever else changed. Manual runs build
+      # everything.
       - name: Compute changed modules
         id: modules
         env:
@@ -57,9 +56,6 @@ jobs:
           esac
 
           if [ -z "$range" ] || ! changed=$(git diff --name-only --diff-filter=d "$range"); then
-            files=$(all_files)
-          elif grep -E '^(lean/|\.github/workflows/build\.yaml$)' <<< "$changed" \
-              | grep -qvE '^lean/LoVe/[^/]+\.lean$'; then
             files=$(all_files)
           else
             files=$(grep -E '^lean/LoVe/[^/]+\.lean$' <<< "$changed" || true)
